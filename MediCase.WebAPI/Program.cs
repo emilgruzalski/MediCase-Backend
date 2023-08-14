@@ -1,3 +1,4 @@
+using MediCase.WebAPI.Middleware;
 using NLog;
 using NLog.Web;
 
@@ -17,6 +18,10 @@ try
     builder.Logging.ClearProviders();
     builder.Host.UseNLog();
 
+    // Add middleware
+    builder.Services.AddScoped<ErrorHandlingMiddleware>();
+    builder.Services.AddScoped<RequestTimeMiddleware>();
+
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
@@ -29,6 +34,9 @@ try
         app.UseSwagger();
         app.UseSwaggerUI();
     }
+
+    app.UseMiddleware<ErrorHandlingMiddleware>();
+    app.UseMiddleware<RequestTimeMiddleware>();
 
     app.UseHttpsRedirection();
 
@@ -49,4 +57,3 @@ finally
     // Ensure to flush and stop internal timers/threads before application-exit (Avoid segmentation fault on Linux)
     NLog.LogManager.Shutdown();
 }
-
