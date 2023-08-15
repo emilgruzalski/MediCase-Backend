@@ -3,6 +3,8 @@ using MediCase.WebAPI.Entities.Content;
 using MediCase.WebAPI.Entities.Moderator;
 using MediCase.WebAPI.Jobs;
 using MediCase.WebAPI.Middleware;
+using MediCase.WebAPI.Services.Interfaces;
+using MediCase.WebAPI.Services;
 using Microsoft.EntityFrameworkCore;
 using NLog;
 using NLog.Web;
@@ -63,6 +65,14 @@ try
     // Add middleware
     builder.Services.AddScoped<ErrorHandlingMiddleware>();
     builder.Services.AddScoped<RequestTimeMiddleware>();
+
+    builder.Services.AddScoped<IFileService, FileService>();
+    builder.Services.AddScoped<IModEntityService, ModEntityService>();
+    builder.Services.AddScoped<IEntityService, EntityService>();
+    builder.Services.AddScoped<ISynchronizationService, SynchronizationService>();
+    builder.Services.AddScoped<ITranslationGeneratorService, TranslationGeneratorService>();
+    builder.Services.AddScoped<IImageGeneratorService, ImageGeneratorService>();
+    builder.Services.AddScoped<IVoiceGeneratorService, VoiceGeneratorService>();
 
     builder.Services.AddScoped<MediCase.WebAPI.Repositories.Moderator.Interfaces.IEntityTypeRepository, MediCase.WebAPI.Repositories.Moderator.EntityTypeRepository>();
     builder.Services.AddScoped<MediCase.WebAPI.Repositories.Moderator.Interfaces.IEntityLanguageRepository, MediCase.WebAPI.Repositories.Moderator.EntityLanguageRepository>();
