@@ -1,4 +1,5 @@
 using MediCase.WebAPI.Entities.Admin;
+using MediCase.WebAPI.Entities.Moderator;
 using MediCase.WebAPI.Jobs;
 using MediCase.WebAPI.Middleware;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,9 @@ try
     // Add services to the container.
     builder.Services.AddDbContext<MediCaseAdminContext>(options =>
            options.UseMySql(builder.Configuration.GetConnectionString("Admin"), ServerVersion.Parse("10.6.14-mariadb")));
+
+    builder.Services.AddDbContext<MediCaseModeratorContext>(options =>
+              options.UseMySql(builder.Configuration.GetConnectionString("Moderator"), ServerVersion.Parse("10.6.14-mariadb")));
 
     // Add Quartz services
     builder.Services.AddQuartz(q =>
