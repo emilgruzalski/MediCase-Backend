@@ -36,8 +36,8 @@ try
         q.AddTrigger(opts => opts
             .ForJob(JobKey)
             .WithIdentity("DeleteOutdatedEntitiesJob-trigger")
-            // Fire at 00:00:05 every day
-            .WithCronSchedule("5 0 0 * * ?")
+            // Fire at 00:00:00 every day
+            .WithCronSchedule("0 0 0 * * ?")
         );
 
         q.AddTrigger(opts => opts
