@@ -1,4 +1,6 @@
+using MediCase.WebAPI.Entities.Admin;
 using MediCase.WebAPI.Middleware;
+using Microsoft.EntityFrameworkCore;
 using NLog;
 using NLog.Web;
 
@@ -11,6 +13,8 @@ try
     var builder = WebApplication.CreateBuilder(args);
 
     // Add services to the container.
+    builder.Services.AddDbContext<MediCaseAdminContext>(options =>
+           options.UseMySql(builder.Configuration.GetConnectionString("Admin"), ServerVersion.Parse("10.6.14-mariadb")));
 
     builder.Services.AddControllers();
 
