@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using NLog;
 using NLog.Web;
 using Quartz;
+using System.Reflection;
 
 // Early init of NLog to allow startup and exception logging, before host is built
 var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
@@ -48,11 +49,16 @@ try
     });
     builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
-    builder.Services.AddControllers();
+    builder.Services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
     // NLog: Setup NLog for Dependency injection
     builder.Logging.ClearProviders();
     builder.Host.UseNLog();
+
+    builder.Services.AddDateOnlyTimeOnlyStringConverters();
+
+    // Add AutoMapper to the container.
+    builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
     // Add middleware
     builder.Services.AddScoped<ErrorHandlingMiddleware>();
@@ -60,7 +66,7 @@ try
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
+    builder.Services.AddSwaggerGen(c => c.UseDateOnlyTimeOnlyStringConverters());
 
     var app = builder.Build();
 
