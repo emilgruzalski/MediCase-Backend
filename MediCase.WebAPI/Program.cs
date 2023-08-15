@@ -64,6 +64,24 @@ try
     builder.Services.AddScoped<ErrorHandlingMiddleware>();
     builder.Services.AddScoped<RequestTimeMiddleware>();
 
+    builder.Services.AddScoped<MediCase.WebAPI.Repositories.Moderator.Interfaces.IEntityTypeRepository, MediCase.WebAPI.Repositories.Moderator.EntityTypeRepository>();
+    builder.Services.AddScoped<MediCase.WebAPI.Repositories.Moderator.Interfaces.IEntityLanguageRepository, MediCase.WebAPI.Repositories.Moderator.EntityLanguageRepository>();
+    builder.Services.AddScoped<MediCase.WebAPI.Repositories.Moderator.Interfaces.IEntityRepository, MediCase.WebAPI.Repositories.Moderator.EntityRepository>();
+    builder.Services.AddScoped<MediCase.WebAPI.Repositories.Moderator.Interfaces.IEntityGraphDataRepository, MediCase.WebAPI.Repositories.Moderator.EntityGraphDataRepository>();
+    builder.Services.AddScoped<MediCase.WebAPI.Repositories.Moderator.Interfaces.IEntityTranslationsRepository, MediCase.WebAPI.Repositories.Moderator.EntityTranslationsRepository>();
+    builder.Services.AddScoped<MediCase.WebAPI.Repositories.Moderator.Interfaces.IEntityTranslationFilesRepository, MediCase.WebAPI.Repositories.Moderator.EntityTranslationFilesRepository>();
+    builder.Services.AddScoped<MediCase.WebAPI.Repositories.Moderator.Interfaces.IModeratorQueryBucketRepository, MediCase.WebAPI.Repositories.Moderator.ModeratorQueryBucketRepository>();
+    builder.Services.AddScoped<MediCase.WebAPI.Repositories.Moderator.Interfaces.IMediCaseModTransactionRepository, MediCase.WebAPI.Repositories.Moderator.MediCaseModTransactionRepository>();
+
+    builder.Services.AddScoped<MediCase.WebAPI.Repositories.Content.Interfaces.IEntityTypeRepository, MediCase.WebAPI.Repositories.Content.EntityTypeRepository>();
+    builder.Services.AddScoped<MediCase.WebAPI.Repositories.Content.Interfaces.IEntityLanguageRepository, MediCase.WebAPI.Repositories.Content.EntityLanguageRepository>();
+    builder.Services.AddScoped<MediCase.WebAPI.Repositories.Content.Interfaces.IEntityRepository, MediCase.WebAPI.Repositories.Content.EntityRepository>();
+    builder.Services.AddScoped<MediCase.WebAPI.Repositories.Content.Interfaces.IEntityGraphDataRepository, MediCase.WebAPI.Repositories.Content.EntityGraphDataRepository>();
+    builder.Services.AddScoped<MediCase.WebAPI.Repositories.Content.Interfaces.IEntityTranslationsRepository, MediCase.WebAPI.Repositories.Content.EntityTranslationsRepository>();
+    builder.Services.AddScoped<MediCase.WebAPI.Repositories.Content.Interfaces.IEntityTranslationFilesRepository, MediCase.WebAPI.Repositories.Content.EntityTranslationFilesRepository>();
+    builder.Services.AddScoped<MediCase.WebAPI.Repositories.Content.Interfaces.ISynchronizationRepository, MediCase.WebAPI.Repositories.Content.SynchronizationRepository>();
+    builder.Services.AddScoped<MediCase.WebAPI.Repositories.Content.Interfaces.IMediCaseTransactionRepository, MediCase.WebAPI.Repositories.Content.MediCaseTransactionRepository>();
+
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(c => c.UseDateOnlyTimeOnlyStringConverters());
