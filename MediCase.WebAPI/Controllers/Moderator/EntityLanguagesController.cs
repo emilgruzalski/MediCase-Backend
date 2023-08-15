@@ -1,0 +1,46 @@
+﻿using MediCase.WebAPI.Models.Entity;
+using MediCase.WebAPI.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace MediCase.WebAPI.Controllers.Moderator
+{
+    [Route("api/Moderator/Entity/[controller]")]
+    [ApiController]
+    public class EntityLanguagesController : Controller
+    {
+        private readonly IModEntityService _entityService;
+
+        public EntityLanguagesController(IModEntityService entityService)
+        {
+            _entityService = entityService;
+        }
+
+
+        [HttpGet("getLanguages")]
+        public async Task<IActionResult> GetLanguages()
+        {
+            return Ok(await _entityService.GetLanguagesAsync());
+        }
+
+        [HttpPost("addLanguage")]
+        public async Task<IActionResult> AddLanguage([FromQuery] string langCode)
+        {
+            return Ok(await _entityService.AddLanguageAsync(langCode));
+        }
+
+        [HttpDelete("deleteLanguage")]
+        public async Task<IActionResult> DeleteLanguage([FromQuery] uint langId)
+        {
+            await _entityService.DeleteLanguageAsync(langId);
+            return Ok();
+        }
+
+        [HttpPatch("updateLanguage")]
+        public async Task<IActionResult> UpdateLanguage([FromBody] EntityLanguageUpdateDto entityLanguage)
+        {
+            await _entityService.UpdateLanguageAsync(entityLanguage);
+            return Ok();
+        }
+    }
+}
