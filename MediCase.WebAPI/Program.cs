@@ -1,8 +1,10 @@
 using MediCase.WebAPI.Entities.Admin;
+using MediCase.WebAPI.Jobs;
 using MediCase.WebAPI.Middleware;
 using Microsoft.EntityFrameworkCore;
 using NLog;
 using NLog.Web;
+using Quartz;
 
 // Early init of NLog to allow startup and exception logging, before host is built
 var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
@@ -15,6 +17,28 @@ try
     // Add services to the container.
     builder.Services.AddDbContext<MediCaseAdminContext>(options =>
            options.UseMySql(builder.Configuration.GetConnectionString("Admin"), ServerVersion.Parse("10.6.14-mariadb")));
+
+    // Add Quartz services
+    builder.Services.AddQuartz(q =>
+    {
+        q.UseMicrosoftDependencyInjectionJobFactory();
+        var JobKey = new JobKey("DeleteOutdatedEntitiesJob");
+        q.AddJob<DeleteOutdatedEntitiesJob>(opts => opts.WithIdentity(JobKey));
+
+        q.AddTrigger(opts => opts
+            .ForJob(JobKey)
+            .WithIdentity("DeleteOutdatedEntitiesJob-trigger")
+            // Fire at 00:00:05 every day
+            .WithCronSchedule("5 0 0 * * ?")
+        );
+
+        q.AddTrigger(opts => opts
+            .ForJob(JobKey)
+            .WithIdentity("DeleteOutdatedEntitiesJob-trigger2")
+            .StartNow()
+        );
+    });
+    builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
     builder.Services.AddControllers();
 
