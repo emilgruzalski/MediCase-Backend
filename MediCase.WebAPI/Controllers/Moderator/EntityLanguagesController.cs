@@ -7,6 +7,7 @@ namespace MediCase.WebAPI.Controllers.Moderator
 {
     [Route("api/Moderator/Entity/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Moderator")]
     public class EntityLanguagesController : Controller
     {
         private readonly IModEntityService _entityService;
@@ -16,7 +17,7 @@ namespace MediCase.WebAPI.Controllers.Moderator
             _entityService = entityService;
         }
 
-
+        [AllowAnonymous]
         [HttpGet("getLanguages")]
         public async Task<IActionResult> GetLanguages()
         {

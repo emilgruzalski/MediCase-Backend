@@ -6,6 +6,7 @@ namespace MediCase.WebAPI.Controllers.Moderator
 {
     [Route("api/Moderator/Entity/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class ModeratorBucketController : Controller
     {
         private readonly IModEntityService _entityService;

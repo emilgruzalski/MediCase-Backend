@@ -6,6 +6,7 @@ namespace MediCase.WebAPI.Controllers.Content
 {
     [Route("api/Main/Entity/[controller]")]
     [ApiController]
+    [Authorize(Roles = "User")]
     public class EntityTypesController : Controller
     {
         private readonly IEntityService _entityService;
@@ -16,6 +17,7 @@ namespace MediCase.WebAPI.Controllers.Content
 
         }
 
+        [AllowAnonymous]
         [HttpGet("getTypes")]
         public async Task<IActionResult> GetEntityTypes()
         {

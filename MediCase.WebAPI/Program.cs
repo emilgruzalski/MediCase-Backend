@@ -13,6 +13,16 @@ using System.Reflection;
 using MediCase.WebAPI;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using FluentValidation;
+using MediCase.WebAPI.Models.Account.Validators;
+using MediCase.WebAPI.Models.Account;
+using MediCase.WebAPI.Models.Group.Validators;
+using MediCase.WebAPI.Models.Group;
+using MediCase.WebAPI.Models.User.Validators;
+using MediCase.WebAPI.Models.User;
+using MediCase.WebAPI.Repositories.Interfaces;
+using MediCase.WebAPI.Repositories;
+using FluentValidation.AspNetCore;
 
 // Early init of NLog to allow startup and exception logging, before host is built
 var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
@@ -87,11 +97,17 @@ try
     // Add AutoMapper to the container.
     builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
+    builder.Services.AddFluentValidationAutoValidation();
+
     builder.Services.AddHttpContextAccessor();
 
     // Add middleware
     builder.Services.AddScoped<ErrorHandlingMiddleware>();
     builder.Services.AddScoped<RequestTimeMiddleware>();
+
+    builder.Services.AddScoped<IUserService, UserService>();
+    builder.Services.AddScoped<IGroupService, GroupService>();
+    builder.Services.AddScoped<IAccountService, AccountService>();
 
     builder.Services.AddScoped<IFileService, FileService>();
     builder.Services.AddScoped<IModEntityService, ModEntityService>();
@@ -100,6 +116,9 @@ try
     builder.Services.AddScoped<ITranslationGeneratorService, TranslationGeneratorService>();
     builder.Services.AddScoped<IImageGeneratorService, ImageGeneratorService>();
     builder.Services.AddScoped<IVoiceGeneratorService, VoiceGeneratorService>();
+
+    builder.Services.AddScoped<IUserRepository, UserRepository>();
+    builder.Services.AddScoped<IGroupRepository, GroupRepository>();
 
     builder.Services.AddScoped<MediCase.WebAPI.Repositories.Moderator.Interfaces.IEntityTypeRepository, MediCase.WebAPI.Repositories.Moderator.EntityTypeRepository>();
     builder.Services.AddScoped<MediCase.WebAPI.Repositories.Moderator.Interfaces.IEntityLanguageRepository, MediCase.WebAPI.Repositories.Moderator.EntityLanguageRepository>();
@@ -118,6 +137,20 @@ try
     builder.Services.AddScoped<MediCase.WebAPI.Repositories.Content.Interfaces.IEntityTranslationFilesRepository, MediCase.WebAPI.Repositories.Content.EntityTranslationFilesRepository>();
     builder.Services.AddScoped<MediCase.WebAPI.Repositories.Content.Interfaces.ISynchronizationRepository, MediCase.WebAPI.Repositories.Content.SynchronizationRepository>();
     builder.Services.AddScoped<MediCase.WebAPI.Repositories.Content.Interfaces.IMediCaseTransactionRepository, MediCase.WebAPI.Repositories.Content.MediCaseTransactionRepository>();
+
+    builder.Services.AddScoped<IValidator<UserDto>, UserDtoValidator>();
+    builder.Services.AddScoped<IValidator<UserNameDto>, UserNameDtoValidator>();
+    builder.Services.AddScoped<IValidator<UserPasswordDto>, UserPasswordDtoValidator>();
+    builder.Services.AddScoped<IValidator<LoginDto>, LoginDtoValidator>();
+    builder.Services.AddScoped<IValidator<UpdateEmailDto>, UpdateEmailDtoValidator>();
+    builder.Services.AddScoped<IValidator<UpdatePasswordDto>, UpdatePasswordDtoValidator>();
+    builder.Services.AddScoped<IValidator<UpdateNameDto>, UpdateNameDtoValidator>();
+    builder.Services.AddScoped<IValidator<UserQuery>, UserQueryValidator>();
+    builder.Services.AddScoped<IValidator<GroupDto>, GroupDtoValidator>();
+    builder.Services.AddScoped<IValidator<GroupDateDto>, GroupDateDtoValidator>();
+    builder.Services.AddScoped<IValidator<GroupNameDto>, GroupNameDtoValidator>();
+    builder.Services.AddScoped<IValidator<GroupDescDto>, GroupDescDtoValidator>();
+    builder.Services.AddScoped<IValidator<GroupQuery>, GroupQueryValidator>();
 
     builder.Services.AddCors(opts =>
     {
@@ -144,6 +177,8 @@ try
 
     app.UseMiddleware<ErrorHandlingMiddleware>();
     app.UseMiddleware<RequestTimeMiddleware>();
+
+    app.UseAuthentication();
 
     app.UseHttpsRedirection();
 

@@ -9,6 +9,7 @@ namespace MediCase.WebAPI.Controllers.Moderator
 {
     [Route("api/Moderator/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Moderator")]
     public class EntityTranslationFilesController : Controller
     {
         private readonly IModEntityService _entityService;
@@ -46,6 +47,7 @@ namespace MediCase.WebAPI.Controllers.Moderator
             return Ok(await _entityService.AddEntityTranslationFileAsync(newEntityTranslationFile));
         }
 
+        [Authorize(Roles = "Moderator,Admin")]
         [HttpGet("getEntityTranslationFile")]
         public async Task<IActionResult> GetEntityTranslationFile([FromQuery] string fileIdentifier)
         {

@@ -6,6 +6,7 @@ namespace MediCase.WebAPI.Controllers.Content
 {
     [Route("api/Main/Entity/[controller]")]
     [ApiController]
+    [Authorize(Roles = "User")]
     public class EntityLanguagesController : Controller
     {
         private readonly IEntityService _entityService;
@@ -16,7 +17,7 @@ namespace MediCase.WebAPI.Controllers.Content
 
         }
 
-
+        [AllowAnonymous]
         [HttpGet("getLanguages")]
         public async Task<IActionResult> GetLanguages()
         {

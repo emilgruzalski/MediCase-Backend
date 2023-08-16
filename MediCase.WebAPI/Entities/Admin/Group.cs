@@ -13,7 +13,11 @@ public partial class Group
 
     public DateOnly? ExpirationDate { get; set; }
 
-    public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
+    public bool IsAdmin { get; set; }
+
+    public bool IsModerator { get; set; }
+
+    public bool IsUser { get; set; }
 
     public virtual ICollection<User> Users { get; set; } = new List<User>();
 }

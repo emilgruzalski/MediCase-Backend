@@ -7,6 +7,7 @@ namespace MediCase.WebAPI.Controllers.Moderator
 {
     [Route("api/Moderator/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Moderator")]
     public class EntityController : Controller
     {
         private readonly IModEntityService _entityService;
@@ -52,18 +53,21 @@ namespace MediCase.WebAPI.Controllers.Moderator
             return Ok();
         }
 
+        [Authorize(Roles = "Moderator,Admin")]
         [HttpGet("getEntities")]
         public async Task<ActionResult> GetEntities()
         {
             return Ok(await _entityService.GetEntitiesAsync());
         }
 
+        [Authorize(Roles = "Moderator,Admin")]
         [HttpGet("getEntitiesWithTranslations")]
         public async Task<IActionResult> GetEntitiesWithTranslations()
         {
             return Ok(await _entityService.GetEntitiesWithTranslationsAsync());
         }
 
+        [Authorize(Roles = "Moderator,Admin")]
         [HttpGet("getEntityWithTranslations")]
         public async Task<IActionResult> GetEntityWithTranslations([FromQuery] uint entityId)
         {

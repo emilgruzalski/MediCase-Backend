@@ -6,6 +6,7 @@ namespace MediCase.WebAPI.Controllers.Content
 {
     [Route("api/Main/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class EntitySynchronizationController : Controller
     {
         private readonly ISynchronizationService _syncService;

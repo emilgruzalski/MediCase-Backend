@@ -7,6 +7,7 @@ namespace MediCase.WebAPI.Controllers.Moderator
 {
     [Route("api/Moderator/Entity/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Moderator")]
     public class EntityTypesController : Controller
     {
         private readonly IModEntityService _entityService;
@@ -17,6 +18,7 @@ namespace MediCase.WebAPI.Controllers.Moderator
 
         }
 
+        [AllowAnonymous]
         [HttpGet("getTypes")]
         public async Task<IActionResult> GetEntityTypes()
         {

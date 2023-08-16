@@ -7,6 +7,7 @@ namespace MediCase.WebAPI.Controllers.Content
 {
     [Route("api/Main/[controller]")]
     [ApiController]
+    [Authorize(Roles = "User")]
     public class EntityTranslationFilesController : Controller
     {
         private readonly IEntityService _entityService;

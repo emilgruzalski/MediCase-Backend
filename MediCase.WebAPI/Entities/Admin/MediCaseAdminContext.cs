@@ -17,8 +17,6 @@ public partial class MediCaseAdminContext : DbContext
 
     public virtual DbSet<Group> Groups { get; set; }
 
-    public virtual DbSet<Role> Roles { get; set; }
-
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -40,40 +38,6 @@ public partial class MediCaseAdminContext : DbContext
 
             entity.Property(e => e.Id).HasColumnType("int(11) unsigned");
             entity.Property(e => e.Description).HasMaxLength(140);
-            entity.Property(e => e.Name).HasMaxLength(20);
-
-            entity.HasMany(d => d.Roles).WithMany(p => p.Groups)
-                .UsingEntity<Dictionary<string, object>>(
-                    "Grouprole",
-                    r => r.HasOne<Role>().WithMany()
-                        .HasForeignKey("RoleId")
-                        .HasConstraintName("FK_grouprole_role"),
-                    l => l.HasOne<Group>().WithMany()
-                        .HasForeignKey("GroupId")
-                        .HasConstraintName("FK_grouprole_group"),
-                    j =>
-                    {
-                        j.HasKey("GroupId", "RoleId")
-                            .HasName("PRIMARY")
-                            .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0 });
-                        j.ToTable("grouprole");
-                        j.HasIndex(new[] { "RoleId" }, "FK_grouprole_role");
-                        j.IndexerProperty<uint>("GroupId").HasColumnType("int(11) unsigned");
-                        j.IndexerProperty<uint>("RoleId").HasColumnType("int(11) unsigned");
-                    });
-        });
-
-        modelBuilder.Entity<Role>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PRIMARY");
-
-            entity.ToTable("role");
-
-            entity.HasIndex(e => e.Name, "Name").IsUnique();
-
-            entity.Property(e => e.Id)
-                .ValueGeneratedNever()
-                .HasColumnType("int(11) unsigned");
             entity.Property(e => e.Name).HasMaxLength(20);
         });
 
