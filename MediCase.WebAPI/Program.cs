@@ -10,6 +10,9 @@ using NLog;
 using NLog.Web;
 using Quartz;
 using System.Reflection;
+using MediCase.WebAPI;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 // Early init of NLog to allow startup and exception logging, before host is built
 var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
@@ -18,6 +21,28 @@ logger.Debug("init main");
 try
 {
     var builder = WebApplication.CreateBuilder(args);
+
+    var authenticationSettings = new AuthenticationSettings();
+
+    builder.Configuration.GetSection("Authentication").Bind(authenticationSettings);
+
+    builder.Services.AddSingleton(authenticationSettings);
+    builder.Services.AddAuthentication(option =>
+    {
+        option.DefaultAuthenticateScheme = "Bearer";
+        option.DefaultScheme = "Bearer";
+        option.DefaultChallengeScheme = "Bearer";
+    }).AddJwtBearer(cfg =>
+    {
+        cfg.RequireHttpsMetadata = false;
+        cfg.SaveToken = true;
+        cfg.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidIssuer = authenticationSettings.JwtIssuer,
+            ValidAudience = authenticationSettings.JwtIssuer,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey)),
+        };
+    });
 
     // Add services to the container.
     builder.Services.AddDbContext<MediCaseAdminContext>(options =>
@@ -62,6 +87,8 @@ try
     // Add AutoMapper to the container.
     builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
+    builder.Services.AddHttpContextAccessor();
+
     // Add middleware
     builder.Services.AddScoped<ErrorHandlingMiddleware>();
     builder.Services.AddScoped<RequestTimeMiddleware>();
@@ -92,6 +119,16 @@ try
     builder.Services.AddScoped<MediCase.WebAPI.Repositories.Content.Interfaces.ISynchronizationRepository, MediCase.WebAPI.Repositories.Content.SynchronizationRepository>();
     builder.Services.AddScoped<MediCase.WebAPI.Repositories.Content.Interfaces.IMediCaseTransactionRepository, MediCase.WebAPI.Repositories.Content.MediCaseTransactionRepository>();
 
+    builder.Services.AddCors(opts =>
+    {
+        opts.AddDefaultPolicy(policy =>
+        {
+            policy.AllowAnyHeader();
+            policy.AllowAnyMethod();
+            policy.AllowAnyOrigin();
+        });
+    });
+
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(c => c.UseDateOnlyTimeOnlyStringConverters());
@@ -109,6 +146,8 @@ try
     app.UseMiddleware<RequestTimeMiddleware>();
 
     app.UseHttpsRedirection();
+
+    app.UseCors();
 
     app.UseAuthorization();
 
