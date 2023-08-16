@@ -159,6 +159,8 @@ namespace MediCase.WebAPI.Services
             if (group is null)
                 throw new NotFoundException("Group not found");
 
+            //var usersEntities = await _userRepository.GetAllAsync();
+
             var users = group.Users.Select(p => p.Id).ToArray();
 
             var usersToAdd = UsersId.Except(users).ToArray();
@@ -166,7 +168,7 @@ namespace MediCase.WebAPI.Services
 
             foreach (var userId in usersToAdd)
             {
-                group.Users.Add(new User() { Id = userId });
+                group.Users.Add(await _userRepository.GetByIdAsync(userId));
             }
 
             foreach (var userId in usersToRemove)
@@ -191,7 +193,7 @@ namespace MediCase.WebAPI.Services
             if (user is null)
                 throw new NotFoundException("User not found");
 
-            group.Users.Add(new User() { Id = UserId });
+            group.Users.Add(user);
 
             await _groupRepository.SaveAsync();
         }
@@ -207,7 +209,7 @@ namespace MediCase.WebAPI.Services
             if (user is null)
                 throw new NotFoundException("User not found");
 
-            group.Users.Add(new User() { Id = user.Id });
+            group.Users.Add(user);
 
             await _groupRepository.SaveAsync();
         }
