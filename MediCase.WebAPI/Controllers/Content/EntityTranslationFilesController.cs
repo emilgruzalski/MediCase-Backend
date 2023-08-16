@@ -17,6 +17,7 @@ namespace MediCase.WebAPI.Controllers.Content
             _entityService = entityService;
         }
 
+        [AllowAnonymous]
         [HttpGet("getEntityTranslationFile")]
         public async Task<IActionResult> GetEntityTranslationFile([FromQuery] string fileIdentifier)
         {

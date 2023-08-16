@@ -47,7 +47,8 @@ namespace MediCase.WebAPI.Controllers.Moderator
             return Ok(await _entityService.AddEntityTranslationFileAsync(newEntityTranslationFile));
         }
 
-        [Authorize(Roles = "Moderator,Admin")]
+        //[Authorize(Roles = "Moderator,Admin")]
+        [AllowAnonymous]
         [HttpGet("getEntityTranslationFile")]
         public async Task<IActionResult> GetEntityTranslationFile([FromQuery] string fileIdentifier)
         {
