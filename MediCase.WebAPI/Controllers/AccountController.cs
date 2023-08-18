@@ -50,8 +50,6 @@ namespace MediCase.WebAPI.Controllers
         [HttpDelete("logout")]
         public ActionResult LogoutAsync() 
         {
-            Response.Cookies.Delete("MediCase-Token");
-
             return Ok();
         }
 
