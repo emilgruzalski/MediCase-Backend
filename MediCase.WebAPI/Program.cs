@@ -152,6 +152,8 @@ try
     builder.Services.AddScoped<IValidator<GroupDescDto>, GroupDescDtoValidator>();
     builder.Services.AddScoped<IValidator<GroupQuery>, GroupQueryValidator>();
 
+    builder.Services.AddScoped<Seeder>();
+
     builder.Services.AddCors(opts =>
     {
         opts.AddDefaultPolicy(policy =>
@@ -167,6 +169,12 @@ try
     builder.Services.AddSwaggerGen(c => c.UseDateOnlyTimeOnlyStringConverters());
 
     var app = builder.Build();
+
+    using (var scope = app.Services.CreateScope())
+    {
+        var seeder = scope.ServiceProvider.GetRequiredService<Seeder>();
+        seeder.Seed();
+    }
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
