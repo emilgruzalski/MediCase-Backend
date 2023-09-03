@@ -79,16 +79,36 @@ namespace MediCase.WebAPI
                 _dbModeratorContext.SaveChanges();
             }
 
-            if (_dbContentContext.Entities.Any()) 
+            if (!_dbContentContext.Entities.Any()) 
             {
                 _dbContentContext.Entities.Add(new Entities.Content.Entity { EntityId = 3, HasChilds = false, LockExpirationDate = DateTime.Now, TypeId = 3, EntityOrder = 0 });
 
                 _dbContentContext.SaveChanges();
             }
 
-            if (_dbModeratorContext.Entities.Any()) 
+            if (!_dbModeratorContext.Entities.Any()) 
             {
                 _dbModeratorContext.Entities.Add(new Entities.Moderator.Entity { EntityId = 3, HasChilds = false, LockExpirationDate = DateTime.Now, TypeId = 3, EntityOrder = 0 });
+
+                _dbModeratorContext.SaveChanges();
+            }
+
+            if (!_dbContentContext.EntityTranslations.Any()) 
+            {
+                _dbContentContext.EntityTranslations.AddRange(
+                    new Entities.Content.EntityTranslation { EntityId = 3, LangId = 1, MainTitle = "Sections" },
+                    new Entities.Content.EntityTranslation { EntityId = 3, LangId = 2, MainTitle = "Sekcje" }
+                );
+
+                _dbContentContext.SaveChanges();
+            }
+
+            if (!_dbModeratorContext.EntityTranslations.Any())
+            {
+                _dbModeratorContext.EntityTranslations.AddRange(
+                    new Entities.Moderator.EntityTranslation { EntityId = 3, LangId = 1, MainTitle = "Sections" },
+                    new Entities.Moderator.EntityTranslation { EntityId = 3, LangId = 2, MainTitle = "Sekcje" }
+                );
 
                 _dbModeratorContext.SaveChanges();
             }
