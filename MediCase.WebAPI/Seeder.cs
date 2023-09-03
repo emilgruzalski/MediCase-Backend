@@ -58,6 +58,26 @@ namespace MediCase.WebAPI
 
                 _dbModeratorContext.SaveChanges();
             }
+
+            if (!_dbContentContext.EntityLanguages.Any())
+            {
+                _dbContentContext.EntityLanguages.AddRange(
+                    new Entities.Content.EntityLanguage { LangId = 1, LangValue = "PL" },
+                    new Entities.Content.EntityLanguage { LangId = 2, LangValue = "US" }
+                );
+
+                _dbContentContext.SaveChanges();
+            }
+
+            if (!_dbModeratorContext.EntityLanguages.Any())
+            {
+                _dbModeratorContext.EntityLanguages.AddRange(
+                    new Entities.Moderator.EntityLanguage { LangId = 1, LangValue = "PL" },
+                    new Entities.Moderator.EntityLanguage { LangId = 2, LangValue = "US" }
+                );
+
+                _dbModeratorContext.SaveChanges();
+            }
         }
     }
 }
