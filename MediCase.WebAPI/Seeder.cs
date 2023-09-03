@@ -78,6 +78,20 @@ namespace MediCase.WebAPI
 
                 _dbModeratorContext.SaveChanges();
             }
+
+            if (_dbContentContext.Entities.Any()) 
+            {
+                _dbContentContext.Entities.Add(new Entities.Content.Entity { EntityId = 3, HasChilds = false, LockExpirationDate = DateTime.Now, TypeId = 3, EntityOrder = 0 });
+
+                _dbContentContext.SaveChanges();
+            }
+
+            if (_dbModeratorContext.Entities.Any()) 
+            {
+                _dbModeratorContext.Entities.Add(new Entities.Moderator.Entity { EntityId = 3, HasChilds = false, LockExpirationDate = DateTime.Now, TypeId = 3, EntityOrder = 0 });
+
+                _dbModeratorContext.SaveChanges();
+            }
         }
     }
 }
