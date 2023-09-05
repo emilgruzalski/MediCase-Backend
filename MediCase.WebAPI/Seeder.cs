@@ -1,6 +1,7 @@
 ﻿using MediCase.WebAPI.Entities.Admin;
 using MediCase.WebAPI.Entities.Content;
 using MediCase.WebAPI.Entities.Moderator;
+using Microsoft.AspNetCore.Identity;
 using System.Data;
 using System.Drawing.Printing;
 
@@ -111,6 +112,16 @@ namespace MediCase.WebAPI
                 );
 
                 _dbModeratorContext.SaveChanges();
+            }
+
+            if (!_dbAdminContext.Groups.Any() && !_dbAdminContext.Users.Any()) 
+            {
+                User John = new User { Id = 1, FirstName = "John", LastName = "Doe", Email = "johndoe@mail.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("foobar") };
+                _dbAdminContext.Users.Add(John);
+                _dbAdminContext.Groups.Add(new Group { Id = 1, IsAdmin = true, IsModerator = true, IsUser = true, Name = "Full Access" });
+                _dbAdminContext.Groups.First().Users.Add(John);
+             
+                _dbAdminContext.SaveChanges();
             }
         }
     }
