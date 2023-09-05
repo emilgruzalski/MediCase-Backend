@@ -2,6 +2,7 @@
 using MediCase.WebAPI.Entities.Content;
 using MediCase.WebAPI.Entities.Moderator;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Drawing.Printing;
 
@@ -122,6 +123,91 @@ namespace MediCase.WebAPI
                 _dbAdminContext.Groups.First().Users.Add(John);
              
                 _dbAdminContext.SaveChanges();
+            }
+
+            bool DoesFunctionExist(string databaseSchema) 
+            {
+                System.FormattableString sql = $@"
+                    SELECT COUNT(*)
+                    FROM information_schema.routines
+                    WHERE routine_name = 'DeleteNode'
+                    AND routine_type = 'PROCEDURE'
+                    AND routine_schema = '{databaseSchema}';
+                ";
+
+                int count = 0;
+
+                if (databaseSchema == "medicase_content") 
+                {
+                    count = _dbContentContext.Database.SqlQuery<int>(sql).FirstOrDefault();
+                } else if (databaseSchema == "medicase_moderator") 
+                {
+                    count = _dbModeratorContext.Database.SqlQuery<int>(sql).FirstOrDefault();
+                }
+
+                return count > 0; 
+            }
+
+            if (!DoesFunctionExist("medicase_content")) 
+            {
+                string sql = @"
+                    CREATE PROCEDURE `DeleteNode`(
+	                    IN `IEntityId` BIGINT
+                    )
+                    BEGIN
+                        CREATE TEMPORARY TABLE ToErase AS
+                        WITH RECURSIVE Tree AS 
+                        (
+		                    (
+			                    SELECT a.EdgeId, a.ParentId, a.ChildId, 0 AS depth
+			                    FROM EntitiesGraphData a
+			                    WHERE a.ParentId=IEntityId OR a.ChildId=IEntityId
+		                    )
+                            UNION ALL
+		                    (
+			                    SELECT c.EdgeId, c.ParentId, c.ChildId, b.depth+1
+			                    FROM Tree b JOIN EntitiesGraphData c ON (b.ChildId=c.ParentId)
+		                    )
+	                    )
+                        SELECT DISTINCT EdgeId, ChildId FROM Tree;
+                        DELETE FROM EntitiesGraphData WHERE EdgeId IN (SELECT EdgeId FROM ToErase);
+                        DELETE FROM Entities WHERE EntityId IN (SELECT ChildId FROM ToErase);
+                        DROP TABLE ToErase;
+                    END;
+                ";
+
+                _dbContentContext.Database.ExecuteSqlRaw(sql);
+            }
+
+            if (!DoesFunctionExist("medicase_moderator"))
+            {
+                string sql = @"
+                    CREATE PROCEDURE `DeleteNode`(
+	                    IN `IEntityId` BIGINT
+                    )
+                    BEGIN
+                        CREATE TEMPORARY TABLE ToErase AS
+                        WITH RECURSIVE Tree AS 
+                        (
+		                    (
+			                    SELECT a.EdgeId, a.ParentId, a.ChildId, 0 AS depth
+			                    FROM EntitiesGraphData a
+			                    WHERE a.ParentId=IEntityId OR a.ChildId=IEntityId
+		                    )
+                            UNION ALL
+		                    (
+			                    SELECT c.EdgeId, c.ParentId, c.ChildId, b.depth+1
+			                    FROM Tree b JOIN EntitiesGraphData c ON (b.ChildId=c.ParentId)
+		                    )
+	                    )
+                        SELECT DISTINCT EdgeId, ChildId FROM Tree;
+                        DELETE FROM EntitiesGraphData WHERE EdgeId IN (SELECT EdgeId FROM ToErase);
+                        DELETE FROM Entities WHERE EntityId IN (SELECT ChildId FROM ToErase);
+                        DROP TABLE ToErase;
+                    END;
+                ";
+
+                _dbModeratorContext.Database.ExecuteSqlRaw(sql);
             }
         }
     }
