@@ -98,8 +98,8 @@ namespace MediCase.WebAPI
             if (!_dbContentContext.EntityTranslations.Any()) 
             {
                 _dbContentContext.EntityTranslations.AddRange(
-                    new Entities.Content.EntityTranslation { EntityId = 3, LangId = 1, MainTitle = "Sections" },
-                    new Entities.Content.EntityTranslation { EntityId = 3, LangId = 2, MainTitle = "Sekcje" }
+                    new Entities.Content.EntityTranslation { EntityId = 3, LangId = 2, MainTitle = "Sections" },
+                    new Entities.Content.EntityTranslation { EntityId = 3, LangId = 1, MainTitle = "Sekcje" }
                 );
 
                 _dbContentContext.SaveChanges();
@@ -108,8 +108,8 @@ namespace MediCase.WebAPI
             if (!_dbModeratorContext.EntityTranslations.Any())
             {
                 _dbModeratorContext.EntityTranslations.AddRange(
-                    new Entities.Moderator.EntityTranslation { EntityId = 3, LangId = 1, MainTitle = "Sections" },
-                    new Entities.Moderator.EntityTranslation { EntityId = 3, LangId = 2, MainTitle = "Sekcje" }
+                    new Entities.Moderator.EntityTranslation { EntityId = 3, LangId = 2, MainTitle = "Sections" },
+                    new Entities.Moderator.EntityTranslation { EntityId = 3, LangId = 1, MainTitle = "Sekcje" }
                 );
 
                 _dbModeratorContext.SaveChanges();
@@ -117,7 +117,7 @@ namespace MediCase.WebAPI
 
             if (!_dbAdminContext.Groups.Any() && !_dbAdminContext.Users.Any()) 
             {
-                User John = new User { Id = 1, FirstName = "John", LastName = "Doe", Email = "johndoe@mail.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("foobar") };
+                User John = new User { Id = 1, FirstName = "John", LastName = "Doe", Email = "john.doe@mail.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("foobar") };
                 _dbAdminContext.Users.Add(John);
                 _dbAdminContext.Groups.Add(new Group { Id = 1, IsAdmin = true, IsModerator = true, IsUser = true, Name = "Full Access" });
                 _dbAdminContext.Groups.First().Users.Add(John);
